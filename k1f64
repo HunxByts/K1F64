@@ -1,0 +1,242 @@
+#!/usr/bin/python
+
+# ============================
+# = DEVELOPER  BY  K 1 L L U =
+# ============================
+
+# ============================
+# +++ R A N S O M W A R E ++++
+# ============================
+
+# ============================
+# =  K1-F64   VERSI   1.0.2  =
+# ============================ 
+
+# DI VERSI 1.0.2 DH BANYAK DI PATCH BUG NYA, SEHARUSNYA DH AMAN SI :)
+# NGAN DH DI BERI MENU JADI NYAMAN NDAK JALANKAN CMIW
+# TINGGAL DI KEMBANGKAN MAHA NI TOOLS 
+
+# buat warna biar mantapz 
+Bl='\033[30m'
+Re='\033[1;31m'
+Gr='\033[1;32m'
+Ye='\033[1;33m'
+Blu='\033[1;34m'
+Mage='\033[1;35m'
+Cy='\033[1;36m'
+Wh='\033[1;37m'
+
+#library buat enkripsi dan deskripsi
+from cryptography.fernet import Fernet as fr 
+from k1genkey import generate_kunci 
+from base64 import b64encode as b64e
+from binascii import hexlify as hx
+from base64 import b64decode as b64d
+from binascii import unhexlify as uhx
+from rich.console import Console
+from rich.panel import Panel
+import sys
+import time
+import os
+
+#baca konci dolo
+def baca_konci():
+    return open("konci.k1", 'rb').read()
+
+#enkripsi data menggnunakan konci
+def enkripsi_data(filemu):
+    kunci_enc = baca_konci()
+    enkripsi_data = fr(kunci_enc)
+    
+    #baca file yang ingin di enkripsi
+    with open(filemu, 'rb') as enkripsi:
+        hasil_en = enkripsi.read()
+    
+    #enkripsi dulu menggunakan fernet
+    enkripsi_data_file = enkripsi_data.encrypt(hasil_en)
+    #enkripsi kembali data menggunakan base64
+    enkripsi_data_file2 = b64e(enkripsi_data_file)
+    
+    #ubah filename pake fungsi hexlify
+    ubah_filename = hx(filemu.encode('utf-8')).decode('utf-8')
+    
+    #buat direkroty untuk menyimpan hasel encrypt coyy cmiw
+    #hasil_dir1 = "Hasil_encryption"
+    #gabungkan_dir_file = os.path.join(hasil_dir1, ubah_filename)
+    #os.makedirs(hasil_dir1, exist_ok=True)
+    
+    #simpan file enkripsi
+    with open(ubah_filename + ".k1", 'wb') as data:
+        data.write(enkripsi_data_file2)
+
+    return ubah_filename
+
+# print(f"""{Cy}
+      
+# ██╗░░██╗░░███╗░░███████╗░█████╗░░░██╗██╗  ███████╗░█████╗░██████╗░██╗░░░██╗██████╗░████████╗
+# ██║░██╔╝░████║░░██╔════╝██╔═══╝░░██╔╝██║  ██╔════╝██╔══██╗██╔══██╗╚██╗░██╔╝██╔══██╗╚══██╔══╝
+# █████═╝░██╔██║░░█████╗░░██████╗░██╔╝░██║  █████╗░░██║░░╚═╝██████╔╝░╚████╔╝░██████╔╝░░░██║░░░
+# ██╔═██╗░╚═╝██║░░██╔══╝░░██╔══██╗███████║  ██╔══╝░░██║░░██╗██╔══██╗░░╚██╔╝░░██╔═══╝░░░░██║░░░
+# ██║░╚██╗███████╗██║░░░░░╚█████╔╝╚════██║  ███████╗╚█████╔╝██║░░██║░░░██║░░░██║░░░░░░░░██║░░░
+# ╚═╝░░╚═╝╚══════╝╚═╝░░░░░░╚════╝░░░░░░╚═╝  ╚══════╝░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░░░░░░╚═╝░░░
+
+#                      {Wh}- {Cy}TOOLS ENCRYPT FILE YANG DI BUAT OLEH K1LLU {Wh}-
+#                                     {Wh}- {Re}VERSI 1.0.1 {Wh}- 
+# """)
+# filemu = input(f"{Wh}[{Re}+{Wh}] {Cy}Masukan File Mu bro! {Wh}:  ")
+# print(f"{Wh}[{Re}+{Wh}] {Cy}Kunci Encrypt {Wh}: {Re}{baca_konci()} {Wh}tersimpan di {Cy}konci.k1!")
+
+# ubah_filname = enkripsi_data(filemu)
+# print(f"{Wh}[{Re}+{Wh}] {Cy}Hasil Enkripsi {Re}{filemu} {Wh}: {Cy}{ubah_filname}.k1")
+
+
+#deskripspi file yang di enkripsi menggunakan konci yang sama
+def deskripsi_konci(balikin_data):
+    
+    #memvalidasi konci
+    konci_baca = baca_konci()
+    deskripsi_data = fr(konci_baca)
+    
+    #baca file yang di enkripsi
+    with open(balikin_data, 'rb') as deskripsi:
+        hasil_de = deskripsi.read()
+    
+    #validasi filename dan membalikan filename menggunakan fungsi unhexlify, serta menghapus ektensi .k1 
+    cek_filename = balikin_data.replace(".k1", "")
+    ori_filname = uhx(cek_filename)
+    validasi_file = ori_filname.decode('utf-8')
+    
+    #deskripsi file menggunakan b64encode dan mendeskipsi fernet
+    deskripsi_data_file = b64d(hasil_de)    
+    deskripsi_data_file2 = deskripsi_data.decrypt(deskripsi_data_file)
+    
+    #buat direkroty untuk menyimpan hasel decrypt coyy cmiw
+    hasil_dir = "Hasil_decryption"
+    gabungkan_dir_file2 = os.path.join(hasil_dir, validasi_file)
+    os.makedirs(hasil_dir, exist_ok=True)
+    
+    #menulif file kembali kebentuk semula sebelum di enkripsi
+    with open(gabungkan_dir_file2, 'wb') as data:
+        data.write(deskripsi_data_file2)
+    
+    return validasi_file, hasil_dir
+
+# print(f"""{Cy}
+
+# ██╗░░██╗░░███╗░░░█████╗░░░██╗██╗  ██████╗░░█████╗░██████╗░██╗░░░██╗██████╗░████████╗
+# ██║░██╔╝░████║░░██╔═══╝░░██╔╝██║  ██╔══██╗██╔══██╗██╔══██╗╚██╗░██╔╝██╔══██╗╚══██╔══╝
+# █████═╝░██╔██║░░██████╗░██╔╝░██║  ██║░░██║██║░░╚═╝██████╔╝░╚████╔╝░██████╔╝░░░██║░░░
+# ██╔═██╗░╚═╝██║░░██╔══██╗███████║  ██║░░██║██║░░██╗██╔══██╗░░╚██╔╝░░██╔═══╝░░░░██║░░░
+# ██║░╚██╗███████╗╚█████╔╝╚════██║  ██████╔╝╚█████╔╝██║░░██║░░░██║░░░██║░░░░░░░░██║░░░
+# ╚═╝░░╚═╝╚══════╝░╚════╝░░░░░░╚═╝  ╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░░░░░░╚═╝░░░
+      
+#                      {Wh}- {Cy}TOOLS ENCRYPT FILE YANG DI BUAT OLEH K1LLU {Wh}-
+#                                     {Wh}- {Re}VERSI 1.0.1 {Wh}-
+# """)
+        
+# balikin_data = input(f"{Wh}[{Re}+{Wh}] {Cy}Masukan File Enkripsi {Wh}: {Re}")
+
+# validasi_file = deskripsi_konci(balikin_data)
+# print(f"{Wh}[{Re}+{Wh}] {Cy}File telah di deskripsi {Wh}: {Re} {validasi_file}")
+# deskripsi_konci(balikin_data)
+
+
+print(f"""{Cy}
+
+██╗░░██╗░░███╗░░  ░░░░░░  ███████╗░█████╗░░░██╗██╗
+██║░██╔╝░████║░░  ░░░░░░  ██╔════╝██╔═══╝░░██╔╝██║
+█████═╝░██╔██║░░  █████╗  █████╗░░██████╗░██╔╝░██║
+██╔═██╗░╚═╝██║░░  ╚════╝  ██╔══╝░░██╔══██╗███████║
+██║░╚██╗███████╗  ░░░░░░  ██║░░░░░╚█████╔╝╚════██║
+╚═╝░░╚═╝╚══════╝  ░░░░░░  ╚═╝░░░░░░╚════╝░░░░░░╚═╝
+                           
+        {Re}- {Wh}TOOLS BY K1LLU-CODE-V.1.0.2 {Re}-
+""")
+
+console = Console()
+
+kotak1 = Panel("[bold red]Pilih Menu Dulu Yak, Sebelum Menjalankan Tools", 
+               title="[bold cyan]SELAMAT DATANG BRO!", 
+               border_style="bold white", 
+               width=50)
+
+kotak2 = Panel("[bold white][[bold red]1[bold white]]. [bold cyan]Generate Key\n[bold white][[bold red]2[bold white]]. [bold cyan]Encryption File\n[bold white][[bold red]3[bold white]]. [bold cyan]Decryption File\n[bold white][[bold red]4[bold white]]. [bold cyan]Exit", 
+               title="[bold cyan]MENU TOOLS", 
+               border_style="bold white", 
+               width=50)
+console.print(kotak1, kotak2)
+
+try:
+    pilihmenu = int(input(f"\n{Wh}[{Re}+{Wh}] {Cy}Masukan Menu Angka Dari {Wh}( {Re}1 {Wh}- {Re}4 {Wh}) : {Cy} "))
+except ValueError: #apabila ada error nya langsung munculkan pesan tegak di bawah
+    print(f"{Wh}[{Re}+{Wh}] {Cy}Menu Pilihan Tidak Ada!")
+except KeyboardInterrupt: #apabila user ctrl + c program otomatis berhenti
+    print(f"{Wh}[{Re}+{Wh}]{Cy}Program di berhentikan user!")
+    sys.exit(0)
+if pilihmenu == 1:
+   try:
+        generate_kunci()
+        print(f"{Wh}[{Re}+{Wh}] {Cy}Sedang Memperoses Kunci!")
+        time.sleep(3)
+        print(f"{Wh}[{Re}+{Wh}] {Cy}Kunci Rahasia Berhasil Di Buat! {Wh}: {Re}{baca_konci()}{Wh} Dan Di Simpan Di {Re}konci.k1")
+        print(f"{Wh}[{Re}+{Wh}] {Cy}Silahkan Lanjut Ke Menu Encryption!")
+        sys.exit(0)
+   except KeyboardInterrupt: #apabila user ctrl + c program otomatis berhenti
+        print(f"{Wh}[{Re}+{Wh}]{Cy}Program di berhentikan user!")
+    
+elif pilihmenu == 2:
+    print(f"""{Cy}
+        
+██╗░░██╗░░███╗░░███████╗░█████╗░░░██╗██╗  ███████╗░█████╗░██████╗░██╗░░░██╗██████╗░████████╗
+██║░██╔╝░████║░░██╔════╝██╔═══╝░░██╔╝██║  ██╔════╝██╔══██╗██╔══██╗╚██╗░██╔╝██╔══██╗╚══██╔══╝
+█████═╝░██╔██║░░█████╗░░██████╗░██╔╝░██║  █████╗░░██║░░╚═╝██████╔╝░╚████╔╝░██████╔╝░░░██║░░░
+██╔═██╗░╚═╝██║░░██╔══╝░░██╔══██╗███████║  ██╔══╝░░██║░░██╗██╔══██╗░░╚██╔╝░░██╔═══╝░░░░██║░░░
+██║░╚██╗███████╗██║░░░░░╚█████╔╝╚════██║  ███████╗╚█████╔╝██║░░██║░░░██║░░░██║░░░░░░░░██║░░░
+╚═╝░░╚═╝╚══════╝╚═╝░░░░░░╚════╝░░░░░░╚═╝  ╚══════╝░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░░░░░░╚═╝░░░
+
+                        {Wh}- {Cy}TOOLS ENCRYPT FILE YANG DI BUAT OLEH K1LLU {Wh}-
+                                        {Wh}- {Re}VERSI 1.0.2 {Wh}- 
+""")
+    try:
+        filemu = input(f"{Wh}[{Re}+{Wh}] {Cy}Masukan File Mu bro! {Wh}:  ")
+    #print(f"{Wh}[{Re}+{Wh}] {Cy}Kunci Encrypt {Wh}: {Re}{baca_konci()} {Wh}tersimpan di {Cy}konci.k1!")
+        time.sleep(3)
+        ubah_filname = enkripsi_data(filemu)
+        print(f"{Wh}[{Re}+{Wh}] {Cy}Hasil Enkripsi {Re}{filemu} {Wh}: {Cy}{ubah_filname}.k1")
+    except KeyboardInterrupt: #apabila user ctrl + c program otomatis berhenti
+        print(f"{Wh}[{Re}+{Wh}]{Cy}Program di berhentikan user!")
+    except ValueError:
+        print(f"{Wh}[{Re}+{Wh}]{Cy}Sepertinya Filenya Gak Ada Nih Atau Ada Typo!")
+
+
+elif pilihmenu == 3:
+    print(f"""{Cy}
+
+██╗░░██╗░░███╗░░░█████╗░░░██╗██╗  ██████╗░░█████╗░██████╗░██╗░░░██╗██████╗░████████╗
+██║░██╔╝░████║░░██╔═══╝░░██╔╝██║  ██╔══██╗██╔══██╗██╔══██╗╚██╗░██╔╝██╔══██╗╚══██╔══╝
+█████═╝░██╔██║░░██████╗░██╔╝░██║  ██║░░██║██║░░╚═╝██████╔╝░╚████╔╝░██████╔╝░░░██║░░░
+██╔═██╗░╚═╝██║░░██╔══██╗███████║  ██║░░██║██║░░██╗██╔══██╗░░╚██╔╝░░██╔═══╝░░░░██║░░░
+██║░╚██╗███████╗╚█████╔╝╚════██║  ██████╔╝╚█████╔╝██║░░██║░░░██║░░░██║░░░░░░░░██║░░░
+╚═╝░░╚═╝╚══════╝░╚════╝░░░░░░╚═╝  ╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░░░░░░╚═╝░░░
+      
+                     {Wh}- {Cy}TOOLS ENCRYPT FILE YANG DI BUAT OLEH K1LLU {Wh}-
+                                    {Wh}- {Re}VERSI 1.0.2 {Wh}-
+""")
+        
+    try:
+        balikin_data = input(f"{Wh}[{Re}+{Wh}] {Cy}Masukan File Enkripsi {Wh}: {Re}")
+        time.sleep(3)
+        validasi_file, hasil_dir = deskripsi_konci(balikin_data)
+        print(f"{Wh}[{Re}+{Wh}] {Cy}File telah di deskripsi {Wh}: {Re}{hasil_dir}/{validasi_file}")
+        deskripsi_konci(balikin_data)
+    except KeyboardInterrupt: #apabila user ctrl + c program otomatis berhenti
+        print(f"{Wh}[{Re}+{Wh}]{Cy}Program di berhentikan user!")
+    except ValueError:
+        print(f"{Wh}[{Re}+{Wh}]{Cy}Sepertinya Filenya Gak Ada Nih Atau Ada Typo!")
+
+elif pilihmenu == 4:
+    print(f"{Wh}[{Re}+{Wh}] {Cy}Program Berhenti!")
+    sys.exit(0)
+else:
+    print("Pilihan Menu Hanya Dari 1 - 4, Tidak Lebih!")
+    sys.exit(0)
